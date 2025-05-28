@@ -16,18 +16,15 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L2] - Actividad Nº 4 - "Temporizador"
-    Objetivo: Agregar lógica del click en los botones de bonificación pasiva y
-              las invocaciones/llamadas programadas (schedule_interval)
+    [M8.L2] - Actividad Nº 5 - "Menú de inicio"
+    Objetivo:  Crear condiciones para un menú: Actores, lógica y comprobación de clicks
 
-    Paso 1º) Crear las funciones bonus 
-    Paso 2º) Comprobar click sobre botones bonus
-    Paso 3º) Agregar funcionalidad de los bonus
-            > Verificar que el jugador tenga puntos suficientes para poder comprar el bonus (y restar esos puntos)
-            > Programar la llamada reiterativa a las funciones bonus y setearlos como activos
+    Paso 1º) Crear una variable global que contenga el estado actual del juego (modo_actual) 
+    Paso 2º) Crear actores para los botones del menú (botón Jugar)
+    Paso 3º) Modificar nuestro draw() para que muestre los botones de nuestro menú
+    Paso 4º) Implementar la lógica (en on_mouse_down) para que al clickear el botón "Jugar", pasemos al modo "juego"
     
-    Extra: agregar animaciones a los botones en caso de compra y en caso de NO poder comprarlo
-    Extra Nº 2: Agregamos un "cheat" para poder probar los bonus sin farmear clicks
+    Extra: agregar "cheat" para volver a la pantalla del menu ppal
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -40,6 +37,7 @@ FPS = 60 # Fotogramas por segundo
 puntuacion = 0 # puntos actuales
 click_mult = 1 # multiplicador del valor por click
 token = "⛏️" # ₽ ¢ ℂ
+modo_actual = "menu" # Estados: "menu" / "juego" (prox. "tienda" y "coleccion")
 
 # OBJETOS / ACTORES:
 fondo = Actor("background", size=(WIDTH, HEIGHT))
@@ -56,6 +54,10 @@ bonus_2.potenciador = 15      # La cant. de puntos extra que agrega cada 2 segun
 bonus_2.ya_activado = False   # atributo que registra si el bonus se ecnuentra activo
 
 # TAREA 7: Agregar bonus_3
+
+boton_jugar = Actor("play", (300, 100))
+
+# TAREA 11 (HOMEWORK 2/2): Agregar los botones de la tienda y nuestra colección de skins
 
 ##########################################################
 
@@ -78,95 +80,114 @@ def el_bonus_2():
   #################### """
 
 def draw():
-    fondo.draw()
-    animal.draw()
 
-    # To-do: Agregar control que chequee que el texto no se salga de la pantalla (ajusta vble fontsize) 
-    screen.draw.text(str(puntuacion) + token, center = (150, 70), color = "white", fontsize = 96)
-
-    # Dibujamos botones bonus:
-    bonus_1.draw()
-    screen.draw.text(("+" + str(bonus_1.potenciador) + " " + token + " cada 2 seg"), center = (bonus_1.x, bonus_1.y - 20), color = "black", fontsize = 20)
-    screen.draw.text(("PRECIO: " + str(bonus_1.precio) + " " + token), center = (bonus_1.x, bonus_1.y + 10), color = "black", fontsize = 20)
-
-    bonus_2.draw()
-    screen.draw.text(("+" + str(bonus_2.potenciador) + " " + token + " cada 2 seg"), center = (bonus_2.x, bonus_2.y - 20), color = "black", fontsize = 20)
-    screen.draw.text(("PRECIO: " + str(bonus_2.precio) + " " + token), center = (bonus_2.x, bonus_2.y + 10), color = "black", fontsize = 20)
-
-    # TAREA 7: Agregar bonus_3
+    if (modo_actual == "menu"):
+        fondo.draw()
+        boton_jugar.draw()
+        
+        # TAREA 11 (HOMEWORK 2/2): Agregar los botones de la tienda y nuestra colección de skins
+    
+    elif (modo_actual == "juego"):
+        fondo.draw()
+        animal.draw()
+    
+        # To-do: Agregar control que chequee que el texto no se salga de la pantalla (ajusta vble fontsize) 
+        screen.draw.text(str(puntuacion) + token, center = (150, 70), color = "white", fontsize = 96)
+    
+        # Dibujamos botones bonus:
+        bonus_1.draw()
+        screen.draw.text(("+" + str(bonus_1.potenciador) + " " + token + " cada 2 seg"), center = (bonus_1.x, bonus_1.y - 20), color = "black", fontsize = 20)
+        screen.draw.text(("PRECIO: " + str(bonus_1.precio) + " " + token), center = (bonus_1.x, bonus_1.y + 10), color = "black", fontsize = 20)
+    
+        bonus_2.draw()
+        screen.draw.text(("+" + str(bonus_2.potenciador) + " " + token + " cada 2 seg"), center = (bonus_2.x, bonus_2.y - 20), color = "black", fontsize = 20)
+        screen.draw.text(("PRECIO: " + str(bonus_2.precio) + " " + token), center = (bonus_2.x, bonus_2.y + 10), color = "black", fontsize = 20)
+    
+        # TAREA 7: Agregar bonus_3
+        # TAREA 10 (HOMEWORK 1/2): Agregar el botón de "cerrar" / "volver al menú"
 
 
 def on_mouse_down(button, pos):
-    global puntuacion
+    global puntuacion, modo_actual
 
     if (button == mouse.LEFT):
-        if (animal.collidepoint(pos)):
-            # Si el click fue sobre el PJ:
-            puntuacion += click_mult
-            # Animación
-            animal.y = 200
-            animate(animal, tween = "bounce_end", duration = 0.5, y = 250)
-            # https://pygame-zero.readthedocs.io/en/stable/builtins.html?highlight=animate#animate
-            
-        elif (bonus_1.collidepoint(pos)): # Si el click fue sobre el botón de bonus # 1:
 
-            if (puntuacion >= bonus_1.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
+        if (modo_actual == "menu"):
+            if (boton_jugar.collidepoint(pos)): # Si el click fue sobre el boton "Jugar"
+                modo_actual = "juego"
 
-                puntuacion -= bonus_1.precio   # Restamos los puntos gastados para comprar el bonus
-                # TAREA 9: Cuando pidan aumentar el precio -> bonus_1.precio *= 2
-
-                # TAREA 8: Agregar animación al comprar el bonus
+        elif (modo_actual == "juego"):
+            if (animal.collidepoint(pos)):
+                # Si el click fue sobre el PJ:
+                puntuacion += click_mult
+                # Animación
+                animal.y = 200
+                animate(animal, tween = "bounce_end", duration = 0.5, y = 250)
+                # https://pygame-zero.readthedocs.io/en/stable/builtins.html?highlight=animate#animate
                 
-                if (bonus_1.ya_activado == False):    # Chequeamos que NO se haya activado antes
-                    schedule_interval(el_bonus_1, 2)  # Programamos las llamadas reiteradas
-                    bonus_1.ya_activado = True        # Lo marcamos como "activado"
-
-                else: # SI YA ESTABA ACTIVO
-                    bonus_1.potenciador += 1           # Aumentamos los puntos que dá este bonus
-                #######################################################################################
-            else:   # Si NO tiene suficientes puntos para comprarlo
+            elif (bonus_1.collidepoint(pos)): # Si el click fue sobre el botón de bonus # 1:
+    
+                if (puntuacion >= bonus_1.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
+    
+                    puntuacion -= bonus_1.precio   # Restamos los puntos gastados para comprar el bonus
+                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_1.precio *= 2
+    
+                    # TAREA 8: Agregar animación al comprar el bonus
                     
-                    # EJEMPLO TAREA 8: Animación de "compra rechazada"
-                    bonus_1.x = 445
-                    animate(bonus_1, tween='bounce_end', duration=0.25, x=450)
-                    bonus_1.x = 455
-                    animate(bonus_1, tween='bounce_end', duration=0.25, x=450)
-        ##############################################################################################
-
-        elif (bonus_2.collidepoint(pos)): # Si el click fue sobre el botón de bonus # 2:
-
-            if (puntuacion >= bonus_2.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
-
-                puntuacion -= bonus_2.precio   # Restamos los puntos gastados para comprar el bonus
-                # TAREA 9: Cuando pidan aumentar el precio -> bonus_2.precio *= 2
-
-                # TAREA 8: Agregar animación al comprar el bonus
-                
-                if (bonus_2.ya_activado == False):    # Chequeamos que NO se haya activado antes
-                    schedule_interval(el_bonus_2, 2)  # Programamos las llamadas reiteradas
-                    bonus_2.ya_activado = True        # Lo marcamos como "activado"
-
-                else: # SI YA ESTABA ACTIVO
-                    bonus_2.potenciador += 15         # Aumentamos los puntos que dá este bonus
-                #######################################################################################
-            else:   # Si NO tiene suficientes puntos para comprarlo
+                    if (bonus_1.ya_activado == False):    # Chequeamos que NO se haya activado antes
+                        schedule_interval(el_bonus_1, 2)  # Programamos las llamadas reiteradas
+                        bonus_1.ya_activado = True        # Lo marcamos como "activado"
+    
+                    else: # SI YA ESTABA ACTIVO
+                        bonus_1.potenciador += 1           # Aumentamos los puntos que dá este bonus
+                    #######################################################################################
+                else:   # Si NO tiene suficientes puntos para comprarlo
+                        
+                        # EJEMPLO TAREA 8: Animación de "compra rechazada"
+                        bonus_1.x = 445
+                        animate(bonus_1, tween='bounce_end', duration=0.25, x=450)
+                        bonus_1.x = 455
+                        animate(bonus_1, tween='bounce_end', duration=0.25, x=450)
+            ##############################################################################################
+    
+            elif (bonus_2.collidepoint(pos)): # Si el click fue sobre el botón de bonus # 2:
+    
+                if (puntuacion >= bonus_2.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
+    
+                    puntuacion -= bonus_2.precio   # Restamos los puntos gastados para comprar el bonus
+                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_2.precio *= 2
+    
+                    # TAREA 8: Agregar animación al comprar el bonus
                     
-                    # EJEMPLO TAREA 8: Animación de "compra rechazada"
-                    bonus_2.x = 445
-                    animate(bonus_2, tween='bounce_end', duration=0.25, x=450)
-                    bonus_2.x = 455
-                    animate(bonus_2, tween='bounce_end', duration=0.25, x=450)      
-        ##############################################################################################
-
-        # TAREA 7: Agregar lógica del bonus_3
+                    if (bonus_2.ya_activado == False):    # Chequeamos que NO se haya activado antes
+                        schedule_interval(el_bonus_2, 2)  # Programamos las llamadas reiteradas
+                        bonus_2.ya_activado = True        # Lo marcamos como "activado"
+    
+                    else: # SI YA ESTABA ACTIVO
+                        bonus_2.potenciador += 15         # Aumentamos los puntos que dá este bonus
+                    #######################################################################################
+                else:   # Si NO tiene suficientes puntos para comprarlo
+                        
+                        # EJEMPLO TAREA 8: Animación de "compra rechazada"
+                        bonus_2.x = 445
+                        animate(bonus_2, tween='bounce_end', duration=0.25, x=450)
+                        bonus_2.x = 455
+                        animate(bonus_2, tween='bounce_end', duration=0.25, x=450)      
+            ##############################################################################################
+    
+            # TAREA 7: Agregar lógica del bonus_3
+            # TAREA 10 (HOMEWORK 1/2): Agregar lógica para el botón de "cerrar" / "volver al menú"
 
 # CHEATS:
 
 def on_key_down(key):
-    global puntuacion
+    global puntuacion, modo_actual
 
     if keyboard.d:
         puntuacion += 500
 
     if keyboard.a:
         puntuacion -= 500
+
+    if keyboard.q:
+        modo_actual = "menu"
