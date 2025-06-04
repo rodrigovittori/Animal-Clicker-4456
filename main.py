@@ -16,23 +16,17 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L3] - Actividad # 2 - "Compra de skins"
-    Objetivo: Poder comprar y cambiar las skins del personaje
+    [M8.L3] - Actividad # 3 - "Colección"
+    Objetivo: Poder cambiar las skins del personaje por las que ya tengamos desbloqueadas
 
-    Paso 1º) En tienda y en Coleccion queremos poder acceder a click_mult,
-             así que lo marcamos como global en on_mouse_down()
+    Paso 1º) Agregar la pantalla de "colección" en nuestro draw()
+    Paso 2º) Habilitar el cambio a modo "coleccion" desde la pantalla de menú en on_mouse_down()
+    Paso 3º) Configurar la interacción con boton_cerrar desde la colección
+    Paso 4º) Implementar el cambio de skins ya desbloqueadas desde on_mouse_down() 
 
-    Paso 2º) Crear las listas "coleccion_completa" y "coleccion_skins"
+    EXTRA 1: Agregamos un cheat para "recuperar" la jirafa
+    EXTRA 2: Agrego los comentarios necesario para implementar la siguiente tarea: agregar a la morsa
     
-    Paso 3º) Implementar compra de skins
-            > Verificar que tenga suficientes créditos
-            > Verificar que no la haya desbloqueado todavía
-            > Agregar la skin comprada a mi colección
-            > Actualizar la skin y el multiplicador tras la compra
-            
-    Paso 4º) Modificar draw para que se ajuste a cualquier cantidad de skins
-
-    EXTRA: Agregar un método que ajuste el tamaño de la puntuación en pantalla
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -62,6 +56,8 @@ hipopotamo.precio = 2500       # El costo en puntos para desbloquearlo
 hipopotamo.mult = 3            # La cant. de puntos que nos otorga por cada click
 
 # TAREA 4: Agregar otro animal (morsa)
+# -> Crear un actor con la imágen "walrus" en las coord (480, 200)
+# Precio: 7000 puntos / multiplicador de click: x4
 
 bonus_1 = Actor("bonus", (450, 100))
 bonus_1.precio = 15           # El costo en puntos para activarlo/mejorarlo
@@ -90,7 +86,7 @@ coleccion_skins = []          # lista de skins desbloqueadas/compradas
 coleccion_completa = []       # lista que contiene todas las skins desbloqueables por el jugador
 coleccion_completa.append(cocodrilo)
 coleccion_completa.append(hipopotamo)
-# TAREA 4: Agregar otro animal (morsa)
+# TAREA 4: Agregar otro animal (morsa) a la lista
 
 ##########################################################
 
@@ -156,6 +152,25 @@ def draw():
         screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
         
         boton_cerrar.draw()
+
+    elif (modo_actual == "coleccion"):
+        fondo.draw()
+
+        for skin in coleccion_completa:
+            if skin not in coleccion_skins: # Si la skin NO ha sido desbloqueada:
+                screen.draw.text(("⚫"), center=(skin.pos), color = "white" , fontsize = 120)
+                screen.draw.text("?", center=(skin.pos), color = "white", fontsize = 96)
+
+            else: # En cambio, si ya la hemos adquirido, la mostramos
+                skin.draw()
+
+            # independientemente del caso, mostramos el multiplicador de click de c/u:
+            screen.draw.text((str(skin.mult) + "x " + token ), center=(skin.x, 300), color = "white" , fontsize = 36)
+
+        # Dibujamos puntuacion
+        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
+        
+        boton_cerrar.draw()
     
     elif (modo_actual == "juego"):
         fondo.draw()
@@ -191,7 +206,8 @@ def on_mouse_down(button, pos):
             elif (boton_tienda.collidepoint(pos)): # Si el click fue sobre el boton "Tienda"
                 modo_actual = "tienda"
 
-            # Tarea 3: Agregar lógica de modo "coleccion"
+            elif (boton_coleccion.collidepoint(pos)): # Si el click fue sobre el boton "Colección"
+                modo_actual = "coleccion"
 
         elif (modo_actual == "tienda"):
             if (boton_cerrar.collidepoint(pos)):
@@ -217,6 +233,19 @@ def on_mouse_down(button, pos):
 
                     # NOTA: Este método funcionará para otros animales SIEMPRE y cuando los incluya en coleccion_completa
 
+         elif (modo_actual == "coleccion"):
+            if (boton_cerrar.collidepoint(pos)):
+                modo_actual = "menu"
+
+                for skin in coleccion_skins:
+                    if ( skin.collidepoint(pos) ): # Si hice click sobre una skin YA DESBLOQUEADA:
+                        animal.image = skin.image  # Cambiamos la skin de nuestro PJ
+                        click_mult = skin.mult     # Actualizamos el mult de click
+                        # Animación de selección de skin
+                        skin.y = 180
+                        animate(skin, tween = "bounce_end", duration = 0.5, y= 200)
+
+        
         elif (modo_actual == "juego"):
             if (boton_cerrar.collidepoint(pos)):
                 modo_actual = "menu"
@@ -234,7 +263,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_1.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_1.precio   # Restamos los puntos gastados para comprar el bonus
-                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_1.precio *= 2
+                    bonus_1.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_1.y = 95
@@ -263,7 +292,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_2.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_2.precio   # Restamos los puntos gastados para comprar el bonus
-                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_2.precio *= 2
+                    bonus_2.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_2.y = 195
@@ -292,7 +321,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_3.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_3.precio   # Restamos los puntos gastados para comprar el bonus
-                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_3.precio *= 2
+                    bonus_3.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_3.y = 295
@@ -315,12 +344,11 @@ def on_mouse_down(button, pos):
                         bonus_3.x = 455
                         animate(bonus_3, tween='bounce_end', duration=0.25, x=450)
             ##############################################################################################
-            # TAREA 10 (HOMEWORK 1/2): Agregar lógica para el botón de "cerrar" / "volver al menú"
 
 # CHEATS:
 
 def on_key_down(key):
-    global puntuacion, modo_actual
+    global puntuacion, modo_actual, click_mult
 
     if keyboard.d:
         puntuacion += 500
@@ -330,3 +358,7 @@ def on_key_down(key):
 
     if keyboard.q:
         modo_actual = "menu"
+
+    if keyboard.j:
+        animal.image = "giraffe"
+        click_mult = 1
