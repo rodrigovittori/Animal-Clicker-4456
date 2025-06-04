@@ -16,14 +16,13 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L2] - Actividad Nº 9 - (Tarea / Homework Nº 1) - "Volver al menú"
-    Objetivo:  Agregar un botón que nos permita regresar al menú principal
+    [M8.L2] - Actividad Nº 11 - (Tarea / Homework Nº 2) - "Dos Nuevos botones"
+    Objetivo:  Agregar los botones del modo "tienda" y "colección"
 
-    NOTA: Nosotros un "cheat" que nos permite regresar al menú principal con la tecla 'q'
+    Paso 1º) Crear los NUEVOS actores con las imágenes "tienda" y "coleccion"
+    Paso 2º) Modificar nuestro draw() para que los dibuje en modo "menú"
 
-    Paso 1º) Crear el actor nuevo con la imágen "cross"
-    Paso 2º) Modificar nuestro draw() para que lo dibuje en modo "juego"
-    Paso 3º) Modificar on_mouse_down() para que en modo "juego" registre los clicks y nos devuelva al modo "menu"
+    NOTA: NO DEBEMOS IMPLEMENTAR LA LÓGICA DE LOS BOTONES, SÓLO MOSTRARLOS
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -58,8 +57,8 @@ bonus_3.potenciador = 50      # La cant. de puntos extra que agrega cada 2 segun
 bonus_3.ya_activado = False   # atributo que registra si el bonus se ecnuentra activo
 
 boton_jugar = Actor("play", (300, 100))
-
-# TAREA 11 (HOMEWORK 2/2): Agregar los botones de la tienda y nuestra colección de skins
+boton_tienda = Actor("tienda", (300, 200))
+boton_coleccion = Actor("coleccion", (300, 300))
 
 boton_cerrar = Actor("cross", (WIDTH - 30, 30))
 ##########################################################
@@ -89,8 +88,8 @@ def draw():
     if (modo_actual == "menu"):
         fondo.draw()
         boton_jugar.draw()
-        
-        # TAREA 11 (HOMEWORK 2/2): Agregar los botones de la tienda y nuestra colección de skins
+        boton_tienda.draw()
+        boton_coleccion.draw()
     
     elif (modo_actual == "juego"):
         fondo.draw()
