@@ -16,12 +16,10 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L2] - Actividad Nº 8 - (Adicional Nº 2) - "Animación de botones"
-    Objetivo:  Agregar animación de compra
+    [M8.L2] - Actividad Nº 9 - (Adicional Nº 3) - "Incremento de precios"
+    Objetivo:  Agregar condición para que los precios aumenten con cada compra
 
-    NOTA: Nosotros ya agregamos una animación para cuando el bonus NO puede comprarse
-
-    Paso 1º) Crear las animacines en on_mouse_down() para cada botón en caso de compra
+    Paso 1º) Descomentar el código en cada bloque de compra
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -134,7 +132,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_1.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_1.precio   # Restamos los puntos gastados para comprar el bonus
-                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_1.precio *= 2
+                    bonus_1.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_1.y = 95
@@ -163,7 +161,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_2.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_2.precio   # Restamos los puntos gastados para comprar el bonus
-                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_2.precio *= 2
+                    bonus_2.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_2.y = 195
@@ -192,7 +190,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_3.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_3.precio   # Restamos los puntos gastados para comprar el bonus
-                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_3.precio *= 2
+                    bonus_3.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_3.y = 295
