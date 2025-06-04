@@ -16,16 +16,15 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L3] - Actividad # 3 - "Colección"
-    Objetivo: Poder cambiar las skins del personaje por las que ya tengamos desbloqueadas
+    [M8.L3] - Actividad # 4 - "Morsa"
+    Objetivo: Agregar nuestro nuevo (y último) personaje
 
-    Paso 1º) Agregar la pantalla de "colección" en nuestro draw()
-    Paso 2º) Habilitar el cambio a modo "coleccion" desde la pantalla de menú en on_mouse_down()
-    Paso 3º) Configurar la interacción con boton_cerrar desde la colección
-    Paso 4º) Implementar el cambio de skins ya desbloqueadas desde on_mouse_down() 
+    Paso 1º) Agregar el Actor morsa con su imágen, coordenadas y atributos
+    Paso 2º) Agregarlo a nuestra lista "coleccion_completa"
 
-    EXTRA 1: Agregamos un cheat para "recuperar" la jirafa
-    EXTRA 2: Agrego los comentarios necesario para implementar la siguiente tarea: agregar a la morsa
+    El código se encargará del resto :)
+
+    Nota: corregimos un bug en el modo colección (error de indentación)
     
 """
 
@@ -55,9 +54,9 @@ hipopotamo = Actor("hippo", (300, 200))
 hipopotamo.precio = 2500       # El costo en puntos para desbloquearlo
 hipopotamo.mult = 3            # La cant. de puntos que nos otorga por cada click
 
-# TAREA 4: Agregar otro animal (morsa)
-# -> Crear un actor con la imágen "walrus" en las coord (480, 200)
-# Precio: 7000 puntos / multiplicador de click: x4
+morsa = Actor("walrus", (480, 200))
+morsa.precio = 7000       # El costo en puntos para desbloquearlo
+morsa.mult = 4            # La cant. de puntos que nos otorga por cada click
 
 bonus_1 = Actor("bonus", (450, 100))
 bonus_1.precio = 15           # El costo en puntos para activarlo/mejorarlo
@@ -86,7 +85,7 @@ coleccion_skins = []          # lista de skins desbloqueadas/compradas
 coleccion_completa = []       # lista que contiene todas las skins desbloqueables por el jugador
 coleccion_completa.append(cocodrilo)
 coleccion_completa.append(hipopotamo)
-# TAREA 4: Agregar otro animal (morsa) a la lista
+coleccion_completa.append(morsa)
 
 ##########################################################
 
@@ -232,20 +231,19 @@ def on_mouse_down(button, pos):
                     skin.x = temp_x
 
                     # NOTA: Este método funcionará para otros animales SIEMPRE y cuando los incluya en coleccion_completa
-
-         elif (modo_actual == "coleccion"):
+                    
+        elif (modo_actual == "coleccion"):
             if (boton_cerrar.collidepoint(pos)):
                 modo_actual = "menu"
 
-                for skin in coleccion_skins:
-                    if ( skin.collidepoint(pos) ): # Si hice click sobre una skin YA DESBLOQUEADA:
-                        animal.image = skin.image  # Cambiamos la skin de nuestro PJ
-                        click_mult = skin.mult     # Actualizamos el mult de click
-                        # Animación de selección de skin
-                        skin.y = 180
-                        animate(skin, tween = "bounce_end", duration = 0.5, y= 200)
+            for skin in coleccion_skins:
+                if ( skin.collidepoint(pos) ): # Si hice click sobre una skin YA DESBLOQUEADA:
+                    animal.image = skin.image  # Cambiamos la skin de nuestro PJ
+                    click_mult = skin.mult     # Actualizamos el mult de click
+                    # Animación de selección de skin
+                    skin.y = 180
+                    animate(skin, tween = "bounce_end", duration = 0.5, y= 200)
 
-        
         elif (modo_actual == "juego"):
             if (boton_cerrar.collidepoint(pos)):
                 modo_actual = "menu"
