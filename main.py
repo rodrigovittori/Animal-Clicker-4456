@@ -16,10 +16,14 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L2] - Actividad Nº 9 - (Adicional Nº 3) - "Incremento de precios"
-    Objetivo:  Agregar condición para que los precios aumenten con cada compra
+    [M8.L2] - Actividad Nº 9 - (Tarea / Homework Nº 1) - "Volver al menú"
+    Objetivo:  Agregar un botón que nos permita regresar al menú principal
 
-    Paso 1º) Descomentar el código en cada bloque de compra
+    NOTA: Nosotros un "cheat" que nos permite regresar al menú principal con la tecla 'q'
+
+    Paso 1º) Crear el actor nuevo con la imágen "cross"
+    Paso 2º) Modificar nuestro draw() para que lo dibuje en modo "juego"
+    Paso 3º) Modificar on_mouse_down() para que en modo "juego" registre los clicks y nos devuelva al modo "menu"
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -57,6 +61,7 @@ boton_jugar = Actor("play", (300, 100))
 
 # TAREA 11 (HOMEWORK 2/2): Agregar los botones de la tienda y nuestra colección de skins
 
+boton_cerrar = Actor("cross", (WIDTH - 30, 30))
 ##########################################################
 
 """ #####################
@@ -108,6 +113,7 @@ def draw():
         screen.draw.text(("PRECIO: " + str(bonus_3.precio) + " " + token), center = (bonus_3.x, bonus_3.y + 10), color = "black", fontsize = 20)
         # TAREA 10 (HOMEWORK 1/2): Agregar el botón de "cerrar" / "volver al menú"
 
+        boton_cerrar.draw()
 
 def on_mouse_down(button, pos):
     global puntuacion, modo_actual
@@ -119,7 +125,10 @@ def on_mouse_down(button, pos):
                 modo_actual = "juego"
 
         elif (modo_actual == "juego"):
-            if (animal.collidepoint(pos)):
+            if (boton_cerrar.collidepoint(pos)):
+                modo_actual = "menu"
+            
+            elif (animal.collidepoint(pos)):
                 # Si el click fue sobre el PJ:
                 puntuacion += click_mult
                 # Animación
@@ -132,7 +141,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_1.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_1.precio   # Restamos los puntos gastados para comprar el bonus
-                    bonus_1.precio *= 2
+                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_1.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_1.y = 95
@@ -161,7 +170,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_2.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_2.precio   # Restamos los puntos gastados para comprar el bonus
-                    bonus_2.precio *= 2
+                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_2.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_2.y = 195
@@ -190,7 +199,7 @@ def on_mouse_down(button, pos):
                 if (puntuacion >= bonus_3.precio): # Chequeamos si tiene suficientes puntos para comprarlo:
     
                     puntuacion -= bonus_3.precio   # Restamos los puntos gastados para comprar el bonus
-                    bonus_3.precio *= 2
+                    # TAREA 9: Cuando pidan aumentar el precio -> bonus_3.precio *= 2
     
                     # Animación de "compra exitosa"
                     bonus_3.y = 295
