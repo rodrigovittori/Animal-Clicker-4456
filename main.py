@@ -16,13 +16,15 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L2] - Actividad Nº 11 - (Tarea / Homework Nº 2) - "Dos Nuevos botones"
-    Objetivo:  Agregar los botones del modo "tienda" y "colección"
+    [M8.L3] - Actividad Nº 1 - "Tienda"
+    Objetivo: Crear una pantalla "Tienda" que sea Accesible
 
-    Paso 1º) Crear los NUEVOS actores con las imágenes "tienda" y "coleccion"
-    Paso 2º) Modificar nuestro draw() para que los dibuje en modo "menú"
+    NOTA: La funcionalidad de comprar skins la implementaremos en la próxima tarea, por ahora es sólo muestra
 
-    NOTA: NO DEBEMOS IMPLEMENTAR LA LÓGICA DE LOS BOTONES, SÓLO MOSTRARLOS
+    Paso 1º) Crear Actores nuevos "cocodrilo" e "hipopotamo"
+    Paso 2º) Configurar la lógica del botón "tienda" en la pantalla "menú"
+    Paso 3º) Modificar nuestro draw() para poder mostrar la pantalla/modo "tienda"
+    Paso 4º) Agregar el botón cerrar y configurar su on_click para volver a "menu"
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -40,6 +42,17 @@ modo_actual = "menu" # Estados: "menu" / "juego" (prox. "tienda" y "coleccion")
 # OBJETOS / ACTORES:
 fondo = Actor("background", size=(WIDTH, HEIGHT))
 animal = Actor("giraffe", (150, 250))
+
+# SKINS
+cocodrilo = Actor("crocodile", (120, 200))
+cocodrilo.precio = 500        # El costo en puntos para desbloquearlo
+cocodrilo.mult = 2            # La cant. de puntos que nos otorga por cada click
+
+hipopotamo = Actor("hippo", (300, 200))
+hipopotamo.precio = 2500       # El costo en puntos para desbloquearlo
+hipopotamo.mult = 3            # La cant. de puntos que nos otorga por cada click
+
+# TAREA 4: Agregar otro animal (morsa)
 
 bonus_1 = Actor("bonus", (450, 100))
 bonus_1.precio = 15           # El costo en puntos para activarlo/mejorarlo
@@ -90,6 +103,26 @@ def draw():
         boton_jugar.draw()
         boton_tienda.draw()
         boton_coleccion.draw()
+
+    elif (modo_actual == "tienda"):
+        fondo.draw()
+
+        # Si ya desbloqueamos TODAS las skins: mostrar cartelito
+
+        cocodrilo.draw()
+        screen.draw.text(str(cocodrilo.precio) + token, center = (cocodrilo.x, 300), color = "white", fontsize = 36)
+
+        hipopotamo.draw()
+        screen.draw.text(str(hipopotamo.precio) + token, center = (hipopotamo.x, 300), color = "white", fontsize = 36)
+
+        # TAREA 4: Agregar otro animal (morsa)
+        
+        # Dibujamos puntuacion
+        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = 24)
+
+        screen.draw.text("LAS COMPRAS SE ENCUENTRAN DESHABILITADAS", center=(WIDTH/2, 350), color="white", background = "black", fontsize = 18)
+
+        boton_cerrar.draw()
     
     elif (modo_actual == "juego"):
         fondo.draw()
@@ -122,6 +155,15 @@ def on_mouse_down(button, pos):
         if (modo_actual == "menu"):
             if (boton_jugar.collidepoint(pos)): # Si el click fue sobre el boton "Jugar"
                 modo_actual = "juego"
+
+            elif (boton_tienda.collidepoint(pos)): # Si el click fue sobre el boton "Tienda"
+                modo_actual = "tienda"
+
+            # Tarea 3: Agregar lógica de modo "coleccion"
+
+        elif (modo_actual == "tienda"):
+            if (boton_cerrar.collidepoint(pos)):
+                modo_actual = "menu"
 
         elif (modo_actual == "juego"):
             if (boton_cerrar.collidepoint(pos)):
