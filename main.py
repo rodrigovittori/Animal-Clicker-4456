@@ -16,15 +16,23 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L3] - Actividad Nº 1 - "Tienda"
-    Objetivo: Crear una pantalla "Tienda" que sea Accesible
+    [M8.L3] - Actividad # 2 - "Compra de skins"
+    Objetivo: Poder comprar y cambiar las skins del personaje
 
-    NOTA: La funcionalidad de comprar skins la implementaremos en la próxima tarea, por ahora es sólo muestra
+    Paso 1º) En tienda y en Coleccion queremos poder acceder a click_mult,
+             así que lo marcamos como global en on_mouse_down()
 
-    Paso 1º) Crear Actores nuevos "cocodrilo" e "hipopotamo"
-    Paso 2º) Configurar la lógica del botón "tienda" en la pantalla "menú"
-    Paso 3º) Modificar nuestro draw() para poder mostrar la pantalla/modo "tienda"
-    Paso 4º) Agregar el botón cerrar y configurar su on_click para volver a "menu"
+    Paso 2º) Crear las listas "coleccion_completa" y "coleccion_skins"
+    
+    Paso 3º) Implementar compra de skins
+            > Verificar que tenga suficientes créditos
+            > Verificar que no la haya desbloqueado todavía
+            > Agregar la skin comprada a mi colección
+            > Actualizar la skin y el multiplicador tras la compra
+            
+    Paso 4º) Modificar draw para que se ajuste a cualquier cantidad de skins
+
+    EXTRA: Agregar un método que ajuste el tamaño de la puntuación en pantalla
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -37,7 +45,8 @@ FPS = 60 # Fotogramas por segundo
 puntuacion = 0 # puntos actuales
 click_mult = 1 # multiplicador del valor por click
 token = "⛏️" # ₽ ¢ ℂ
-modo_actual = "menu" # Estados: "menu" / "juego" (prox. "tienda" y "coleccion")
+modo_actual = "menu" # Estados: "menu" / "juego" / "tienda" y "coleccion"
+tam_fuente_punt = 96 # Altura en píxeles del indicador de puntuacion
 
 # OBJETOS / ACTORES:
 fondo = Actor("background", size=(WIDTH, HEIGHT))
@@ -74,6 +83,15 @@ boton_tienda = Actor("tienda", (300, 200))
 boton_coleccion = Actor("coleccion", (300, 300))
 
 boton_cerrar = Actor("cross", (WIDTH - 30, 30))
+
+# Listas skins
+coleccion_skins = []          # lista de skins desbloqueadas/compradas
+
+coleccion_completa = []       # lista que contiene todas las skins desbloqueables por el jugador
+coleccion_completa.append(cocodrilo)
+coleccion_completa.append(hipopotamo)
+# TAREA 4: Agregar otro animal (morsa)
+
 ##########################################################
 
 """ #####################
@@ -92,6 +110,22 @@ def el_bonus_3():
     global puntuacion
     puntuacion += bonus_3.potenciador
 
+def actualizar_tam_fuente_punt():
+  global tam_fuente_punt
+
+  # Ajustar el tamaño de la fuente según el tamaño de la puntuación
+  if puntuacion < 1000:
+    tam_fuente_punt = 96
+      
+  elif puntuacion < 10000:
+    tam_fuente_punt = 72
+
+  elif puntuacion < 100000:
+      tam_fuente_punt = 48
+
+  else:
+    tam_fuente_punt = 32
+
 """ ####################
    # FUNCIONES PGZERO #
   #################### """
@@ -107,29 +141,27 @@ def draw():
     elif (modo_actual == "tienda"):
         fondo.draw()
 
-        # Si ya desbloqueamos TODAS las skins: mostrar cartelito
+        # Si ya desbloqueamos TODAS las skins:
+        if (set(coleccion_skins) == set(coleccion_completa)):
+            screen.draw.text("¡FELICIDADES!", center=(WIDTH/2, HEIGHT/3), color = "white", background = "black" , fontsize = 42)
+            screen.draw.text("Has adquirido todas las skins", center=(WIDTH/2, HEIGHT/3*2), color = "white", background = "black" , fontsize = 32)
 
-        cocodrilo.draw()
-        screen.draw.text(str(cocodrilo.precio) + token, center = (cocodrilo.x, 300), color = "white", fontsize = 36)
+        else:
+            for skin in coleccion_completa:
+                if skin not in coleccion_skins: # Si todavía NO la hemos adquirido
+                    skin.draw()
+                    screen.draw.text((str(skin.precio) + token), center=(skin.x, 300), color = "white" , fontsize = 36)
 
-        hipopotamo.draw()
-        screen.draw.text(str(hipopotamo.precio) + token, center = (hipopotamo.x, 300), color = "white", fontsize = 36)
-
-        # TAREA 4: Agregar otro animal (morsa)
+        # NOTA: Ponemos acá la puntuación porque no la queremos mostrar cuando el jugador ya haya desbloqueado todo
+        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = tam_fuente_punt)
         
-        # Dibujamos puntuacion
-        screen.draw.text((str(puntuacion) + token), center=(150, 70), color="white", fontsize = 24)
-
-        screen.draw.text("LAS COMPRAS SE ENCUENTRAN DESHABILITADAS", center=(WIDTH/2, 350), color="white", background = "black", fontsize = 18)
-
         boton_cerrar.draw()
     
     elif (modo_actual == "juego"):
         fondo.draw()
         animal.draw()
     
-        # To-do: Agregar control que chequee que el texto no se salga de la pantalla (ajusta vble fontsize) 
-        screen.draw.text(str(puntuacion) + token, center = (150, 70), color = "white", fontsize = 96)
+        screen.draw.text(str(puntuacion) + token, center = (150, 70), color = "white", fontsize = tam_fuente_punt)
     
         # Dibujamos botones bonus:
         bonus_1.draw()
@@ -143,14 +175,14 @@ def draw():
         bonus_3.draw()
         screen.draw.text(("+" + str(bonus_3.potenciador) + " " + token + " cada 2 seg"), center = (bonus_3.x, bonus_3.y - 20), color = "black", fontsize = 20)
         screen.draw.text(("PRECIO: " + str(bonus_3.precio) + " " + token), center = (bonus_3.x, bonus_3.y + 10), color = "black", fontsize = 20)
-        # TAREA 10 (HOMEWORK 1/2): Agregar el botón de "cerrar" / "volver al menú"
 
         boton_cerrar.draw()
 
 def on_mouse_down(button, pos):
-    global puntuacion, modo_actual
+    global puntuacion, modo_actual, click_mult
 
     if (button == mouse.LEFT):
+        actualizar_tam_fuente_punt()
 
         if (modo_actual == "menu"):
             if (boton_jugar.collidepoint(pos)): # Si el click fue sobre el boton "Jugar"
@@ -164,6 +196,26 @@ def on_mouse_down(button, pos):
         elif (modo_actual == "tienda"):
             if (boton_cerrar.collidepoint(pos)):
                 modo_actual = "menu"
+
+            for skin in coleccion_completa:
+                if ( ( skin.collidepoint(pos) )    and    # Si le doy click a una skin 
+                     (skin not in coleccion_skins) and    # Y esa skin NO la tengo desbloqueada
+                     ( puntuacion >= skin.precio)     ):  # Y tengo suficientes créditos/tokens
+
+                    puntuacion -= skin.precio             # Restamos los créditos para comprar
+                    animal.image = skin.image             # Cambiamos la skin de nuestro PJ
+                    click_mult = skin.mult                # Actualizamos el mult de click
+                    coleccion_skins.append(skin)          # Agrego la skin comprada a mi lista
+
+                else: # Si NO lo puedo comprar:
+                    temp_x = skin.x
+                    skin.x = temp_x - 10
+                    animate(skin, tween="bounce_start", duration = 0.25, x = temp_x)
+                    skin.x = temp_x + 10
+                    animate(skin, tween="bounce_end", duration = 0.25, x = temp_x)
+                    skin.x = temp_x
+
+                    # NOTA: Este método funcionará para otros animales SIEMPRE y cuando los incluya en coleccion_completa
 
         elif (modo_actual == "juego"):
             if (boton_cerrar.collidepoint(pos)):
