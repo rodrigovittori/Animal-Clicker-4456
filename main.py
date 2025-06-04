@@ -16,13 +16,12 @@
     
     --------------------------------------------------------------------------
     
-    [M8.L2] - Actividad Nº 7 - (Adicional Nº 1) - "Superbonificación"
-    Objetivo:  Agregar un tercer bonus con incremento +50 y precio base de 600 puntos
+    [M8.L2] - Actividad Nº 8 - (Adicional Nº 2) - "Animación de botones"
+    Objetivo:  Agregar animación de compra
 
-    Paso 1º) Crear el actor bonus_3 
-    Paso 2º) Crear la función invocable el_bonus_3
-    Paso 3º) Modificar nuestro draw() para que muestre el nuevo botón
-    Paso 4º) Implementar la lógica (en on_mouse_down) para que el bonus pueda comprarse
+    NOTA: Nosotros ya agregamos una animación para cuando el bonus NO puede comprarse
+
+    Paso 1º) Crear las animacines en on_mouse_down() para cada botón en caso de compra
 """
 
 WIDTH = 600  # Ancho de la ventana
@@ -137,7 +136,11 @@ def on_mouse_down(button, pos):
                     puntuacion -= bonus_1.precio   # Restamos los puntos gastados para comprar el bonus
                     # TAREA 9: Cuando pidan aumentar el precio -> bonus_1.precio *= 2
     
-                    # TAREA 8: Agregar animación al comprar el bonus
+                    # Animación de "compra exitosa"
+                    bonus_1.y = 95
+                    animate(bonus_1, tween='bounce_end', duration=0.25, y=100)
+                    bonus_1.y = 105
+                    animate(bonus_1, tween='bounce_end', duration=0.25, y=100)
                     
                     if (bonus_1.ya_activado == False):    # Chequeamos que NO se haya activado antes
                         schedule_interval(el_bonus_1, 2)  # Programamos las llamadas reiteradas
@@ -148,7 +151,7 @@ def on_mouse_down(button, pos):
                     #######################################################################################
                 else:   # Si NO tiene suficientes puntos para comprarlo
                         
-                        # EJEMPLO TAREA 8: Animación de "compra rechazada"
+                        # Animación de "compra rechazada"
                         bonus_1.x = 445
                         animate(bonus_1, tween='bounce_end', duration=0.25, x=450)
                         bonus_1.x = 455
@@ -162,7 +165,11 @@ def on_mouse_down(button, pos):
                     puntuacion -= bonus_2.precio   # Restamos los puntos gastados para comprar el bonus
                     # TAREA 9: Cuando pidan aumentar el precio -> bonus_2.precio *= 2
     
-                    # TAREA 8: Agregar animación al comprar el bonus
+                    # Animación de "compra exitosa"
+                    bonus_2.y = 195
+                    animate(bonus_2, tween='bounce_end', duration=0.25, y=200)
+                    bonus_2.y = 205
+                    animate(bonus_2, tween='bounce_end', duration=0.25, y=200)
                     
                     if (bonus_2.ya_activado == False):    # Chequeamos que NO se haya activado antes
                         schedule_interval(el_bonus_2, 2)  # Programamos las llamadas reiteradas
@@ -187,7 +194,11 @@ def on_mouse_down(button, pos):
                     puntuacion -= bonus_3.precio   # Restamos los puntos gastados para comprar el bonus
                     # TAREA 9: Cuando pidan aumentar el precio -> bonus_3.precio *= 2
     
-                    # TAREA 8: Agregar animación al comprar el bonus
+                    # Animación de "compra exitosa"
+                    bonus_3.y = 295
+                    animate(bonus_3, tween='bounce_end', duration=0.25, y=300)
+                    bonus_3.y = 305
+                    animate(bonus_3, tween='bounce_end', duration=0.25, y=300)
                     
                     if (bonus_3.ya_activado == False):    # Chequeamos que NO se haya activado antes
                         schedule_interval(el_bonus_3, 2)  # Programamos las llamadas reiteradas
